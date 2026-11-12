@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Khufu Pyramid Research Model</title>
+<title>KHUFU PYRAMID | Research Model v2</title>
 
 <script type="importmap">
 {
@@ -17,342 +17,557 @@
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#101316;color:#eee;font-family:system-ui,-apple-system,sans-serif}
-header{padding:13px;background:#171c20;border-bottom:1px solid #394147}
-h1{font-size:16px;margin:0 0 4px}
-header p{font-size:11px;color:#adb8bc;margin:0}
-#stage{height:62vh;min-height:330px;position:relative;background:#101316}
+body{
+ margin:0;background:#101316;color:#eee;
+ font-family:system-ui,-apple-system,sans-serif
+}
+header{
+ padding:14px;background:#171c20;
+ border-bottom:1px solid #394147
+}
+h1{font-size:17px;margin:0 0 4px}
+header p{font-size:11px;color:#aeb8bc;margin:0}
+#stage{
+ height:58vh;min-height:340px;
+ position:relative;background:#101316
+}
 #view{width:100%;height:100%;display:block;touch-action:none}
-#status{position:absolute;bottom:9px;left:10px;padding:6px 9px;border-radius:6px;background:#172128dd;color:#b9d7df;font-size:11px}
-#panel{padding:12px;background:#171c20}
-h2{font-size:14px;margin:0 0 8px}
-label{display:inline-flex;align-items:center;gap:5px;margin:5px 10px 5px 0;font-size:12px}
-button{background:#293840;color:white;border:1px solid #64747d;border-radius:7px;padding:8px 11px;margin:3px;font-size:12px}
-#info{padding:13px;background:#20272c;border-top:1px solid #394147;font-size:12px;line-height:1.7;min-height:95px}
-.warning{color:#f0c68b}
+#status{
+ position:absolute;bottom:9px;left:10px;
+ padding:7px 10px;border-radius:7px;
+ background:#172128dd;color:#b9d7df;
+ font-size:11px
+}
+#panel{padding:13px;background:#171c20}
+h2{font-size:14px;margin:0 0 10px}
+.section{padding:10px 0;border-top:1px solid #394147}
+label{
+ display:inline-flex;align-items:center;
+ gap:6px;margin:5px 10px 5px 0;font-size:12px
+}
+button{
+ background:#293840;color:white;
+ border:1px solid #64747d;border-radius:7px;
+ padding:9px 11px;margin:3px;font-size:12px
+}
+button:active{background:#46606b}
+input[type=range]{width:100%}
+#info{
+ padding:14px;background:#20272c;
+ border-top:1px solid #394147;
+ font-size:12px;line-height:1.7;
+ min-height:100px
+}
+.note{color:#f0c68b}
+.small{font-size:11px;color:#aab5b8}
 </style>
 </head>
 
 <body>
+
 <header>
-<h1>クフ王の大ピラミッド｜研究統合モデル v1.1</h1>
-<p>考古学的測量値を基準にした研究用モデル・未確定領域は概念表示</p>
+<h1>KHUFU PYRAMID / RESEARCH MODEL v2.0</h1>
+<p>HALF CUTAWAY · EXTERIOR & INTERIOR STRUCTURE</p>
 </header>
 
 <div id="stage">
 <canvas id="view"></canvas>
-<div id="status">3Dモデルを準備しています…</div>
+<div id="status">3Dモデルを準備しています...</div>
 </div>
 
 <div id="panel">
-<h2>表示レイヤー</h2>
-<label><input type="checkbox" id="shell" checked> 外形</label>
-<label><input type="checkbox" id="rooms" checked> 内部構造</label>
-<label><input type="checkbox" id="north" checked> 北面回廊</label>
-<label><input type="checkbox" id="void" checked> Big Void</label>
-<div>
-<button id="all">全体表示</button>
-<button id="northView">北面</button>
-<button id="section">断面方向</button>
-<button id="rotate">自動回転 ON</button>
+
+<h2>表示モード</h2>
+<div class="section">
+<button id="half">ハーフカット</button>
+<button id="outside">外装</button>
+<button id="skeleton">スケルトン</button>
+<button id="section">断面</button>
 </div>
-<p style="font-size:11px;color:#aab5b8">
-ドラッグ：回転 ／ ピンチ：拡大縮小 ／ 2本指ドラッグ：移動
+
+<div class="section">
+<h2>構造レイヤー</h2>
+<label><input type="checkbox" id="shellToggle" checked> 外装側</label>
+<label><input type="checkbox" id="frameToggle" checked> 骨格側</label>
+<label><input type="checkbox" id="roomsToggle" checked> 部屋・通路</label>
+<label><input type="checkbox" id="voidToggle" checked> 検出空間</label>
+</div>
+
+<div class="section">
+<h2>外装の透過率</h2>
+<div class="small">不透明 ← → 透明</div>
+<input type="range" id="opacity" min="0" max="100" value="100">
+</div>
+
+<div class="section">
+<h2>視点操作</h2>
+<button id="reset">全体表示</button>
+<button id="north">北面</button>
+<button id="rotate">自動回転 ON</button>
+<p class="small">
+ドラッグ：回転<br>
+ピンチ：拡大縮小<br>
+2本指ドラッグ：移動
 </p>
 </div>
 
+</div>
+
 <div id="info">
-<strong>モデルの説明</strong><br>
-3Dオブジェクトをタップすると、寸法や根拠を表示します。
+<strong>研究モデル v2.0</strong><br>
+オブジェクトをタップすると説明が表示されます。
 </div>
 
 <script type="module">
+
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 
+const canvas=document.getElementById('view');
 const status=document.getElementById('status');
 const info=document.getElementById('info');
-const canvas=document.getElementById('view');
 
-try {
-  const scene=new THREE.Scene();
-  scene.background=new THREE.Color(0x101316);
+try{
 
-  const camera=new THREE.PerspectiveCamera(42,1,0.1,2000);
-  camera.position.set(270,190,300);
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x101316);
 
-  const renderer=new THREE.WebGLRenderer({
-    canvas,
-    antialias:true,
-    alpha:false
-  });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
-  renderer.outputColorSpace=THREE.SRGBColorSpace;
+const camera=new THREE.PerspectiveCamera(42,1,0.1,2000);
+camera.position.set(270,190,310);
 
-  const controls=new OrbitControls(camera,renderer.domElement);
-  controls.enableDamping=true;
-  controls.dampingFactor=0.06;
-  controls.target.set(0,65,0);
-  controls.minDistance=100;
-  controls.maxDistance=650;
+const renderer=new THREE.WebGLRenderer({
+ canvas,
+ antialias:true
+});
 
-  scene.add(new THREE.HemisphereLight(0xffffff,0x65513b,2.1));
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
 
-  const sun=new THREE.DirectionalLight(0xffe5bd,2.5);
-  sun.position.set(-150,250,180);
-  scene.add(sun);
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;
+controls.dampingFactor=.06;
+controls.target.set(0,65,0);
+controls.minDistance=100;
+controls.maxDistance=650;
 
-  const ground=new THREE.GridHelper(300,20,0x52616a,0x293238);
-  ground.position.y=-0.5;
-  scene.add(ground);
+scene.add(new THREE.HemisphereLight(0xffffff,0x65513b,2));
 
-  const root=new THREE.Group();
-  scene.add(root);
+const sun=new THREE.DirectionalLight(0xffe5bd,2.5);
+sun.position.set(-150,250,180);
+scene.add(sun);
 
-  const selectable=[];
-  const B=230.35;
-  const H=146.71;
-  const s=B/2;
+const grid=new THREE.GridHelper(300,20,0x52616a,0x293238);
+grid.position.y=-.5;
+scene.add(grid);
 
-  function material(color,opacity=1,wire=false){
-    return new THREE.MeshStandardMaterial({
-      color,
-      transparent:opacity<1,
-      opacity,
-      wireframe:wire,
-      side:THREE.DoubleSide,
-      roughness:0.88
-    });
-  }
+const root=new THREE.Group();
+scene.add(root);
 
-  function addObject(geometry,color,name,description,opacity=1,wire=false){
-    const mesh=new THREE.Mesh(
-      geometry,
-      material(color,opacity,wire)
-    );
-    mesh.name=name;
-    mesh.userData.description=description;
-    root.add(mesh);
-    selectable.push(mesh);
-    return mesh;
-  }
+const shellGroup=new THREE.Group();
+const frameGroup=new THREE.Group();
+const roomsGroup=new THREE.Group();
+const voidGroup=new THREE.Group();
 
-  // Pyramid shell: Petrie's published reconstructed dimensions
-  const pyramidGeometry=new THREE.BufferGeometry();
+root.add(shellGroup,frameGroup,roomsGroup,voidGroup);
 
-  const vertices=new Float32Array([
-    -s,0,-s,
-     s,0,-s,
-     s,0, s,
-    -s,0, s,
-     0,H,0
-  ]);
+const selectable=[];
 
-  pyramidGeometry.setAttribute(
-    'position',
-    new THREE.BufferAttribute(vertices,3)
-  );
+const B=230.35;
+const H=146.71;
+const s=B/2;
 
-  pyramidGeometry.setIndex([
-    0,2,1,
-    0,3,2,
-    0,1,4,
-    1,2,4,
-    2,3,4,
-    3,0,4
-  ]);
+// Materials
+const stoneMaterial=new THREE.MeshStandardMaterial({
+ color:0xcbb28a,
+ roughness:.9,
+ transparent:true,
+ opacity:1,
+ side:THREE.DoubleSide
+});
 
-  pyramidGeometry.computeVertexNormals();
+const frameMaterial=new THREE.LineBasicMaterial({
+ color:0xd6c49e,
+ transparent:true,
+ opacity:.85
+});
 
-  const shell=addObject(
-    pyramidGeometry,
-    0xd8c49a,
-    '大ピラミッド外形',
-    'Petrie（1883）の測量値を基準にした理想化外形。化粧石底辺平均 9,068.8 in（約230.35m）、頂点高 5,776 in（約146.71m）。現存外装の完全な実測形状ではありません。',
-    0.24
-  );
+const passageMaterial=new THREE.MeshStandardMaterial({
+ color:0x66b7d0,
+ roughness:.8
+});
 
-  const edges=new THREE.LineSegments(
-    new THREE.EdgesGeometry(pyramidGeometry),
-    new THREE.LineBasicMaterial({
-      color:0xe3d3ae,
-      transparent:true,
-      opacity:0.8
-    })
-  );
-  root.add(edges);
+const chamberMaterial=new THREE.MeshStandardMaterial({
+ color:0xc38d60,
+ roughness:.85
+});
 
-  // Interior structures: schematic placement, not final survey coordinates
-  const interior=new THREE.Group();
-  root.add(interior);
+const detectedMaterial=new THREE.MeshBasicMaterial({
+ color:0xc58bd9,
+ wireframe:true
+});
 
-  function room(name,pos,size,color,description){
-    const mesh=new THREE.Mesh(
-      new THREE.BoxGeometry(size[0],size[1],size[2]),
-      material(color,0.9)
-    );
-    mesh.position.set(pos[0],pos[1],pos[2]);
-    mesh.name=name;
-    mesh.userData.description=description;
-    interior.add(mesh);
-    selectable.push(mesh);
-    return mesh;
-  }
-
-  room(
-    '地下の岩窟',
-    [0,-3,0],
-    [9,3,8],
-    0x9b9b9b,
-    'Petrieが記録した地下の未完成空間。岩盤を掘削した不整形な空間です。この箱は位置を示す概略記号であり、実際の輪郭・寸法を表していません。'
-  );
-
-  room(
-    '女王の間',
-    [0,21,0],
-    [5.23,5,5.78],
-    0x56a9c2,
-    'Petrie測量記録に基づく平面寸法の概略表示。幅約5.23m、長さ約5.78m。正確な座標・床高の再構成は未完了です。'
-  );
-
-  room(
-    '王の間',
-    [0,43,0],
-    [10.5,5.9,5.2],
-    0xc18a5d,
-    '王の間の概略表示。高さ方向の位置はPetrie測量記録を参照した仮配置です。最終的な測量座標への整合は未完了です。'
-  );
-
-  const northCorridor=room(
-    '北面回廊',
-    [0,3,105],
-    [2.02,2.18,9.06],
-    0x65c9e6,
-    '2025年の高感度ミューオン測定で報告された寸法：幅2.02±0.06m、高さ2.18±0.17m、長さ9.06±0.07m。ここでの位置は概念表示であり、ピラミッド全体の座標系への厳密な変換を示すものではありません。'
-  );
-  northCorridor.visible=false;
-
-  const bigVoid=addObject(
-    new THREE.BoxGeometry(5,3,30),
-    0xc58bd9,
-    'Big Void（検出情報）',
-    'ScanPyramids 2017のミューオン調査で、大回廊の上方に最低長さ30mの大きな空隙が検出されました。正確な輪郭・幅・高さ・端点は確定していません。この表示は検出情報の概念記号で、確定した部屋の形ではありません。',
-    0.28,
-    true
-  );
-  bigVoid.position.set(0,83,0);
-
-  // Initial view
-  function resize(){
-    const w=canvas.clientWidth;
-    const h=canvas.clientHeight;
-    if(!w||!h)return;
-    camera.aspect=w/h;
-    camera.updateProjectionMatrix();
-    renderer.setSize(w,h,false);
-  }
-
-  window.addEventListener('resize',resize);
-  resize();
-
-  document.getElementById('shell').onchange=e=>{
-    shell.visible=e.target.checked;
-    edges.visible=e.target.checked;
-  };
-
-  document.getElementById('rooms').onchange=e=>{
-    interior.visible=e.target.checked;
-  };
-
-  document.getElementById('north').onchange=e=>{
-    northCorridor.visible=e.target.checked;
-  };
-
-  document.getElementById('void').onchange=e=>{
-    bigVoid.visible=e.target.checked;
-  };
-
-  function setView(position,target){
-    camera.position.set(...position);
-    controls.target.set(...target);
-    controls.update();
-  }
-
-  document.getElementById('all').onclick=()=>{
-    setView([270,190,300],[0,65,0]);
-  };
-
-  document.getElementById('northView').onclick=()=>{
-    setView([0,100,370],[0,55,0]);
-  };
-
-  document.getElementById('section').onclick=()=>{
-    setView([350,100,0],[0,60,0]);
-  };
-
-  let rotating=true;
-  document.getElementById('rotate').onclick=()=>{
-    rotating=!rotating;
-    document.getElementById('rotate').textContent=
-      '自動回転 '+(rotating?'ON':'OFF');
-  };
-
-  // Tap object to show its source/limitations
-  const raycaster=new THREE.Raycaster();
-  const pointer=new THREE.Vector2();
-
-  let startX=0,startY=0;
-
-  canvas.addEventListener('pointerdown',e=>{
-    startX=e.clientX;
-    startY=e.clientY;
-  });
-
-  canvas.addEventListener('pointerup',e=>{
-    const moved=Math.hypot(e.clientX-startX,e.clientY-startY);
-    if(moved>8)return;
-
-    const rect=canvas.getBoundingClientRect();
-    pointer.x=((e.clientX-rect.left)/rect.width)*2-1;
-    pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;
-
-    raycaster.setFromCamera(pointer,camera);
-    const hits=raycaster.intersectObjects(selectable,false);
-
-    if(hits.length){
-      const obj=hits[0].object;
-      info.innerHTML=
-        '<strong>'+obj.name+'</strong><br>'+
-        obj.userData.description;
-    }
-  });
-
-  let lastTime=0;
-
-  function animate(time){
-    requestAnimationFrame(animate);
-
-    if(rotating && time-lastTime>16){
-      root.rotation.y+=0.0015;
-      lastTime=time;
-    }
-
-    controls.update();
-    renderer.render(scene,camera);
-  }
-
-  requestAnimationFrame(animate);
-
-  status.textContent='3Dモデル表示中｜ドラッグして回転できます';
-
-} catch(error) {
-  console.error(error);
-  status.textContent='3D読み込みエラー：'+error.message;
-  info.innerHTML=
-    '<strong>3D表示に失敗しました</strong><br>'+
-    '通信環境を確認して再読み込みしてください。<br>'+
-    '詳細：'+error.message;
+// Geometry helper
+function triangle(a,b,c){
+ const geo=new THREE.BufferGeometry();
+ geo.setAttribute(
+  'position',
+  new THREE.Float32BufferAttribute([
+   ...a,...b,...c
+  ],3)
+ );
+ geo.computeVertexNormals();
+ return geo;
 }
+
+function addTriangle(group,a,b,c){
+ const mesh=new THREE.Mesh(
+  triangle(a,b,c),
+  stoneMaterial
+ );
+ group.add(mesh);
+ return mesh;
+}
+
+// Pyramid vertices
+const A=[-s,0,-s];
+const B1=[0,0,-s];
+const C=[0,H,0];
+const D=[-s,0,s];
+const E=[0,0,s];
+
+const F=[s,0,-s];
+const G=[s,0,s];
+const P=[0,H,0];
+
+// LEFT HALF: exterior shell
+addTriangle(shellGroup,A,D,C);
+addTriangle(shellGroup,A,B1,C);
+addTriangle(shellGroup,D,C,E);
+
+// Base of exterior half
+addTriangle(shellGroup,A,D,E);
+addTriangle(shellGroup,A,E,B1);
+
+// RIGHT HALF: exposed skeleton
+const framePoints=[
+ [B1,F],
+ [F,G],
+ [G,E],
+ [E,B1],
+ [B1,P],
+ [F,P],
+ [G,P],
+ [E,P]
+];
+
+function lineBetween(group,a,b,color=0xd6c49e){
+ const geo=new THREE.BufferGeometry().setFromPoints([
+  new THREE.Vector3(...a),
+  new THREE.Vector3(...b)
+ ]);
+ const line=new THREE.Line(
+  geo,
+  new THREE.LineBasicMaterial({color})
+ );
+ group.add(line);
+ return line;
+}
+
+framePoints.forEach(pair=>{
+ lineBetween(frameGroup,pair[0],pair[1]);
+});
+
+// Horizontal reference levels on skeleton side
+for(let y=15;y<140;y+=15){
+ const z=s*(1-y/H);
+ const x=s*(1-y/H);
+
+ lineBetween(
+  frameGroup,
+  [0,y,-z],
+  [x,y,0],
+  0x667a82
+ );
+}
+
+// Central cut surface boundary
+lineBetween(frameGroup,B1,C,0xf0d6a8);
+lineBetween(frameGroup,E,C,0xf0d6a8);
+lineBetween(frameGroup,B1,E,0xf0d6a8);
+
+// Structure helper
+function addBox(group,name,pos,size,material,description){
+ const mesh=new THREE.Mesh(
+  new THREE.BoxGeometry(...size),
+  material
+ );
+ mesh.position.set(...pos);
+ mesh.name=name;
+ mesh.userData.description=description;
+ group.add(mesh);
+ selectable.push(mesh);
+ return mesh;
+}
+
+// Known chambers: diagrammatic placement only
+addBox(
+ roomsGroup,
+ '地下の岩窟',
+ [0,-3,0],
+ [9,3,8],
+ new THREE.MeshStandardMaterial({color:0x969696}),
+ '地下の岩窟。Petrieの記録では岩盤を掘削した未完成の空間。ここでは不整形な実測輪郭を再現していません。'
+);
+
+addBox(
+ roomsGroup,
+ '女王の間',
+ [0,21,0],
+ [5.23,5,5.78],
+ chamberMaterial,
+ '女王の間。Petrieの測量記録を参考にした平面寸法の概略表示。幅約5.23m、長さ約5.78m。配置座標は最終測量座標への整合前です。'
+);
+
+addBox(
+ roomsGroup,
+ '王の間',
+ [0,43,0],
+ [10.5,5.9,5.2],
+ chamberMaterial,
+ '王の間。Petrieの測量記録を参照した概略表示。位置・壁形状の厳密な座標復元は未完了です。'
+);
+
+// Schematic passage paths
+function addPassage(name,points,description){
+ const curve=new THREE.CatmullRomCurve3(
+  points.map(p=>new THREE.Vector3(...p))
+ );
+ const geometry=new THREE.TubeGeometry(curve,48,.8,8,false);
+ const mesh=new THREE.Mesh(geometry,passageMaterial);
+ mesh.name=name;
+ mesh.userData.description=description;
+ roomsGroup.add(mesh);
+ selectable.push(mesh);
+ return mesh;
+}
+
+addPassage(
+ '下降通路（概略）',
+ [
+  [0,0,110],
+  [0,-5,85],
+  [0,-12,50],
+  [0,-25,12]
+ ],
+ '下降通路。Petrieの測量図を基礎に今後座標を確定する対象。現在は経路の概念表示であり、正確な勾配・長さ・位置の再現ではありません。'
+);
+
+addPassage(
+ '上昇通路（概略）',
+ [
+  [0,4,50],
+  [0,12,30],
+  [0,20,12],
+  [0,27,0]
+ ],
+ '上昇通路。Petrieの測量図に基づく復元対象。現在は概略経路です。'
+);
+
+addPassage(
+ '大回廊（概略）',
+ [
+  [0,27,0],
+  [0,34,0],
+  [0,48,0],
+  [0,57,0]
+ ],
+ '大回廊。実際の床・側壁・持ち送り天井の形状は、測量断面図と照合して次段階で復元します。'
+);
+
+// North Face Corridor: not yet placed at survey coordinates
+addBox(
+ voidGroup,
+ '北面回廊 SP-NFC（概念表示）',
+ [0,3,105],
+ [2.02,2.18,9.06],
+ detectedMaterial,
+ '北面回廊。公表されたミューオン測定寸法の概念表示。幅2.02±0.06m、高さ2.18±0.17m、長さ9.06±0.07m。ピラミッド全体の座標系への正確な変換は未完了です。'
+);
+
+// Big Void marker: not a confirmed room shape
+addBox(
+ voidGroup,
+ 'Big Void（検出情報）',
+ [0,83,0],
+ [5,3,30],
+ detectedMaterial,
+ 'ScanPyramids 2017。大回廊上方に最低長さ30mの空隙を検出。正確な幅・高さ・輪郭は未確定です。この箱は検出情報の概念記号であり、確定した部屋の形状ではありません。'
+);
+
+// Display controls
+const shellToggle=document.getElementById('shellToggle');
+const frameToggle=document.getElementById('frameToggle');
+const roomsToggle=document.getElementById('roomsToggle');
+const voidToggle=document.getElementById('voidToggle');
+
+shellToggle.onchange=e=>{
+ shellGroup.visible=e.target.checked;
+};
+
+frameToggle.onchange=e=>{
+ frameGroup.visible=e.target.checked;
+};
+
+roomsToggle.onchange=e=>{
+ roomsGroup.visible=e.target.checked;
+};
+
+voidToggle.onchange=e=>{
+ voidGroup.visible=e.target.checked;
+};
+
+// Modes
+function setMode(mode){
+
+ shellGroup.visible=mode!=='skeleton';
+ frameGroup.visible=mode!=='outside';
+ roomsGroup.visible=mode!=='outside';
+ voidGroup.visible=mode==='half'||mode==='skeleton';
+
+ shellToggle.checked=shellGroup.visible;
+ frameToggle.checked=frameGroup.visible;
+ roomsToggle.checked=roomsGroup.visible;
+ voidToggle.checked=voidGroup.visible;
+
+}
+
+document.getElementById('half').onclick=()=>{
+ setMode('half');
+};
+
+document.getElementById('outside').onclick=()=>{
+ setMode('outside');
+};
+
+document.getElementById('skeleton').onclick=()=>{
+ setMode('skeleton');
+};
+
+document.getElementById('section').onclick=()=>{
+ setMode('skeleton');
+ camera.position.set(330,90,0);
+ controls.target.set(0,55,0);
+ controls.update();
+};
+
+// Opacity
+document.getElementById('opacity').oninput=e=>{
+ stoneMaterial.opacity=Number(e.target.value)/100;
+};
+
+// Camera
+function view(position,target){
+ camera.position.set(...position);
+ controls.target.set(...target);
+ controls.update();
+}
+
+document.getElementById('reset').onclick=()=>{
+ view([270,190,310],[0,65,0]);
+};
+
+document.getElementById('north').onclick=()=>{
+ view([0,100,370],[0,55,0]);
+};
+
+// Rotation
+let rotating=true;
+
+document.getElementById('rotate').onclick=()=>{
+ rotating=!rotating;
+ document.getElementById('rotate').textContent=
+ '自動回転 '+(rotating?'ON':'OFF');
+};
+
+// Tap selection
+const raycaster=new THREE.Raycaster();
+const pointer=new THREE.Vector2();
+
+let startX=0;
+let startY=0;
+
+canvas.addEventListener('pointerdown',e=>{
+ startX=e.clientX;
+ startY=e.clientY;
+});
+
+canvas.addEventListener('pointerup',e=>{
+ const moved=Math.hypot(
+  e.clientX-startX,
+  e.clientY-startY
+ );
+
+ if(moved>8)return;
+
+ const rect=canvas.getBoundingClientRect();
+
+ pointer.x=((e.clientX-rect.left)/rect.width)*2-1;
+ pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;
+
+ raycaster.setFromCamera(pointer,camera);
+
+ const hits=raycaster.intersectObjects(selectable,false);
+
+ if(hits.length){
+  const obj=hits[0].object;
+  info.innerHTML=
+   '<strong>'+obj.name+'</strong><br>'+
+   obj.userData.description;
+ }
+});
+
+// Resize
+function resize(){
+ const w=canvas.clientWidth;
+ const h=canvas.clientHeight;
+
+ if(!w||!h)return;
+
+ camera.aspect=w/h;
+ camera.updateProjectionMatrix();
+ renderer.setSize(w,h,false);
+}
+
+window.addEventListener('resize',resize);
+resize();
+
+// Animation
+function animate(){
+ requestAnimationFrame(animate);
+
+ if(rotating){
+  root.rotation.y+=.0012;
+ }
+
+ controls.update();
+ renderer.render(scene,camera);
+}
+
+requestAnimationFrame(animate);
+
+status.textContent='3D表示中｜ハーフカットモデル v2.0';
+
+}catch(error){
+
+ console.error(error);
+
+ status.textContent='3Dエラー：'+error.message;
+
+ info.innerHTML=
+ '<strong>読み込みエラー</strong><br>'+error.message;
+
+}
+
 </script>
 </body>
 </html>
