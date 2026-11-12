@@ -1,32 +1,328 @@
+
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>クフ王の大ピラミッド｜研究統合モデル v1</title>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Khufu Pyramid | Evidence Model v1</title>
 <style>
-:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:#101317;color:#edf0f2;font:14px/1.5 system-ui,-apple-system,sans-serif}header{padding:13px 16px;border-bottom:1px solid #343a40}h1{font-size:17px;margin:0 0 3px}p{margin:3px 0;color:#b8c1c8}.layout{display:grid;grid-template-columns:minmax(0,1fr) 280px;min-height:calc(100vh - 72px)}#view{height:calc(100vh - 72px);min-height:520px;position:relative}canvas{display:block;width:100%;height:100%;touch-action:none}aside{padding:14px;border-left:1px solid #343a40;background:#171c21;overflow:auto}.item{display:flex;gap:9px;margin:10px 0;align-items:flex-start}.item input{margin-top:4px}.sw{width:12px;height:12px;border-radius:3px;flex:none;margin-top:4px}small{display:block;color:#aeb8c0;font-size:11px}.note{font-size:12px;color:#b4bdc5;border-top:1px solid #343a40;padding-top:11px;margin-top:14px}button{background:#2b3945;color:white;border:1px solid #52616e;border-radius:7px;padding:8px 10px;margin:4px 4px 4px 0}#status{font-size:12px;color:#f1c879;margin:8px 0}.legend{font-size:12px;color:#c6cdd2}@media(max-width:760px){.layout{grid-template-columns:1fr}#view{height:58vh;min-height:390px}aside{border-left:0;border-top:1px solid #343a40}}
-</style></head><body><header><h1>クフ王の大ピラミッド｜研究統合モデル v1</h1><p>既知構造・検出空間・未調査領域を分けて表示する初期概念モデル</p></header>
-<div class="layout"><div id="view"></div><aside><b>表示レイヤー</b>
-<label class="item"><input type="checkbox" data-layer="OUTER" checked><span class="sw" style="background:#cdb996"></span><span>外形（半透明）<small>底辺 約230.3m／当初高さ 約146.6m</small></span></label>
-<label class="item"><input type="checkbox" data-layer="KNOWN" checked><span class="sw" style="background:#f5b937"></span><span>既知の部屋・通路<small>模式的な位置・形状</small></span></label>
-<label class="item"><input type="checkbox" data-layer="DETECTED" checked><span class="sw" style="background:#f0782d"></span><span>検出された空間<small>Big Void／北面回廊。外形は仮置き</small></span></label>
-<label class="item"><input type="checkbox" data-layer="SURVEY" checked><span class="sw" style="background:#4191e1"></span><span>調査領域<small>北面シェブロン周辺の位置目印</small></span></label>
-<label class="item"><input type="checkbox" data-layer="UNKNOWN" checked><span class="sw" style="background:#858a94"></span><span>未調査領域の目印<small>空洞や部屋の存在を示さない</small></span></label>
-<label class="item"><input type="checkbox" data-layer="REFERENCE" checked><span class="sw" style="background:#555b61"></span><span>基準面</span></label>
-<div><button id="reset">視点リセット</button><button id="cut">外形の表示切替</button></div><div id="status">3Dモデルを読み込み中…</div>
-<div class="note"><b>精度・注意事項</b><br>これは公開研究の内容をもとにした初期の模式モデルで、ピラミッド全体の実測スキャンではありません。既知の部屋・通路も位置関係を説明するための概略形状です。Big Voidや北面回廊の箱形状は検出範囲を説明する仮の表示で、確定した実寸・形状ではありません。グレーは未調査の「場所の目印」であり、未知の空洞を主張するものではありません。<br><br><b>操作</b><br>マウス／指でドラッグ：回転<br>ホイール／ピンチ：拡大縮小<br>右ドラッグ／2本指：平行移動<br><br><b>座標</b><br>単位：m／Z軸：上／北：+Y</div></aside></div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-<script>
-const host=document.getElementById('view');const scene=new THREE.Scene();scene.background=new THREE.Color(0x101317);
-const camera=new THREE.PerspectiveCamera(43,1,0.1,2000);camera.up.set(0,0,1);camera.position.set(280,-330,220);
-const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));host.appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xffffff,0x55515a,2));const light=new THREE.DirectionalLight(0xffffff,2);light.position.set(180,-230,280);scene.add(light);
-const controls=new THREE.OrbitControls(camera,renderer.domElement);controls.target.set(0,0,55);controls.enableDamping=true;
-const grid=new THREE.GridHelper(280,28,0x48515a,0x293038);grid.rotation.x=Math.PI/2;grid.position.z=0;scene.add(grid);
-let model=null;const data='data:model/gltf-binary;base64,Z2xURgIAAADsIQAAtBwAAEpTT057InNjZW5lIjowLCJzY2VuZXMiOlt7Im5vZGVzIjpbMF19XSwiYXNzZXQiOnsidmVyc2lvbiI6IjIuMCIsImdlbmVyYXRvciI6Imh0dHBzOi8vZ2l0aHViLmNvbS9taWtlZGgvdHJpbWVzaCJ9LCJhY2Nlc3NvcnMiOlt7ImNvbXBvbmVudFR5cGUiOjUxMjUsInR5cGUiOiJTQ0FMQVIiLCJidWZmZXJWaWV3IjowLCJjb3VudCI6MTIsIm1heCI6WzRdLCJtaW4iOlswXX0seyJjb21wb25lbnRUeXBlIjo1MTI2LCJ0eXBlIjoiVkVDMyIsImJ5dGVPZmZzZXQiOjAsImJ1ZmZlclZpZXciOjEsImNvdW50Ijo1LCJtYXgiOlsxMTUuMTUwMDAxNTI1ODc4OSwxMTUuMTUwMDAxNTI1ODc4OSwxNDYuNjAwMDA2MTAzNTE1NjJdLCJtaW4iOlstMTE1LjE1MDAwMTUyNTg3ODksLTExNS4xNTAwMDE1MjU4Nzg5LDAuMF19LHsiY29tcG9uZW50VHlwZSI6NTEyNSwidHlwZSI6IlNDQUxBUiIsImJ1ZmZlclZpZXciOjIsImNvdW50IjozNiwibWF4IjpbN10sIm1pbiI6WzBdfSx7ImNvbXBvbmVudFR5cGUiOjUxMjYsInR5cGUiOiJWRUMzIiwiYnl0ZU9mZnNldCI6MCwiYnVmZmVyVmlldyI6MywiY291bnQiOjgsIm1heCI6WzUuMjUsMS42MDAwMDAwMjM4NDE4NTgsNDUuOTAwMDAxNTI1ODc4OTA2XSwibWluIjpbLTUuMjUsLTMuNTk5OTk5OTA0NjMyNTY4NCw0MC4wOTk5OTg0NzQxMjEwOTRdfSx7ImNvbXBvbmVudFR5cGUiOjUxMjYsInR5cGUiOiJWRUMzIiwiYnl0ZU9mZnNldCI6MCwiYnVmZmVyVmlldyI6NCwiY291bnQiOjgsIm1heCI6WzIuODQ5OTk5OTA0NjMyNTY4NCwzLjU5OTk5OTkwNDYzMjU2ODQsMjUuMF0sIm1pbiI6Wy0yLjg0OTk5OTkwNDYzMjU2ODQsLTEuNjAwMDAwMDIzODQxODU4LDE5LjBdfSx7ImNvbXBvbmVudFR5cGUiOjUxMjYsInR5cGUiOiJWRUMzIiwiYnl0ZU9mZnNldCI6MCwiYnVmZmVyVmlldyI6NSwiY291bnQiOjgsIm1heCI6WzcuMCwtMS4wLC0wLjVdLCJtaW4iOlstNy4wLC05LjAsLTMuNV19LHsiY29tcG9uZW50VHlwZSI6NTEyNiwidHlwZSI6IlZFQzMiLCJieXRlT2Zmc2V0IjowLCJidWZmZXJWaWV3Ijo2LCJjb3VudCI6OCwibWF4IjpbMS4xODU0NzUzNDk0MjYyNjk1LDEwNS4yNDU1OTc4MzkzNTU0NywxOC4xNTk3NTU3MDY3ODcxMV0sIm1pbiI6Wy0xLjE4NTQ3NTM0OTQyNjI2OTUsMTkuNzU0NDA0MDY3OTkzMTY0LC0yLjE1OTc1NjE4MzYyNDI2NzZdfSx7ImNvbXBvbmVudFR5cGUiOjUxMjYsInR5cGUiOiJWRUMzIiwiYnl0ZU9mZnNldCI6MCwiYnVmZmVyVmlldyI6NywiY291bnQiOjgsIm1heCI6WzEuNDA5MTYyNDAyMTUzMDE1MSwyMC45MDg3Mjc2NDU4NzQwMjMsMzYuMDc3MDExMTA4Mzk4NDRdLCJtaW4iOlstMS40MDkxNjI0MDIxNTMwMTUxLC0xMi45MDg3Mjc2NDU4NzQwMjMsNi45MjI5ODkzNjg0Mzg3MjFdfSx7ImNvbXBvbmVudFR5cGUiOjUxMjYsInR5cGUiOiJWRUMzIiwiYnl0ZU9mZnNldCI6MCwiYnVmZmVyVmlldyI6OCwiY291bnQiOjgsIm1heCI6WzQuMTg1MTUzNDg0MzQ0NDgyLDE3LjkxNzI4MjEwNDQ5MjE4OCw2My4xNTA2NjUyODMyMDMxMjVdLCJtaW4iOlstNC4xODUxNTM0ODQzNDQ0ODIsLTE0LjkxNzI4MjEwNDQ5MjE4OCwzMS44NDkzMzQ3MTY3OTY4NzVdfSx7ImNvbXBvbmVudFR5cGUiOjUxMjYsInR5cGUiOiJWRUMzIiwiYnl0ZU9mZnNldCI6MCwiYnVmZmVyVmlldyI6OSwiY291bnQiOjgsIm1heCI6WzQuMCw4LjAsODEuMF0sIm1pbiI6Wy00LjAsLTI0LjAsNzUuMF19LHsiY29tcG9uZW50VHlwZSI6NTEyNiwidHlwZSI6IlZFQzMiLCJieXRlT2Zmc2V0IjowLCJidWZmZXJWaWV3IjoxMCwiY291bnQiOjgsIm1heCI6WzEuMTAwMDAwMDIzODQxODU4LDExMi41LDIxLjBdLCJtaW4iOlstMS4xMDAwMDAwMjM4NDE4NTgsMTAzLjUsMTkuMF19LHsiY29tcG9uZW50VHlwZSI6NTEyNiwidHlwZSI6IlZFQzMiLCJieXRlT2Zmc2V0IjowLCJidWZmZXJWaWV3IjoxMSwiY291bnQiOjgsIm1heCI6WzYuNSwxMTQuNzUsMjUuNV0sIm1pbiI6Wy02LjUsMTEzLjI1LDE4LjVdfSx7ImNvbXBvbmVudFR5cGUiOjUxMjYsInR5cGUiOiJWRUMzIiwiYnl0ZU9mZnNldCI6MCwiYnVmZmVyVmlldyI6MTIsImNvdW50Ijo4LCJtYXgiOlszOS4wLC0xOC4wLDUzLjBdLCJtaW4iOlsyMS4wLC0zMi4wLDQzLjBdfSx7ImNvbXBvbmVudFR5cGUiOjUxMjYsInR5cGUiOiJWRUMzIiwiYnl0ZU9mZnNldCI6MCwiYnVmZmVyVmlldyI6MTMsImNvdW50Ijo4LCJtYXgiOlsxMjUuMCwxMjUuMCwtMC4xNTAwMDAwMDU5NjA0NjQ0OF0sIm1pbiI6Wy0xMjUuMCwtMTI1LjAsLTAuNDQ5OTk5OTg4MDc5MDcxMDRdfV0sIm1lc2hlcyI6W3sibmFtZSI6IkxBWUVSX09VVEVSfE91dGVyIHB5cmFtaWQgZW52ZWxvcGUiLCJleHRyYXMiOnt9LCJwcmltaXRpdmVzIjpbeyJhdHRyaWJ1dGVzIjp7IlBPU0lUSU9OIjoxfSwiaW5kaWNlcyI6MCwibW9kZSI6NCwibWF0ZXJpYWwiOjB9XX0seyJuYW1lIjoiTEFZRVJfS05PV058S2luZyBjaGFtYmVyIC0gc2NoZW1hdGljIiwiZXh0cmFzIjp7InNoYXBlIjoiYm94IiwiZXh0ZW50cyI6WzEwLjUsNS4yLDUuOF19LCJwcmltaXRpdmVzIjpbeyJhdHRyaWJ1dGVzIjp7IlBPU0lUSU9OIjozfSwiaW5kaWNlcyI6MiwibW9kZSI6NCwibWF0ZXJpYWwiOjF9XX0seyJuYW1lIjoiTEFZRVJfS05PV058UXVlZW4gY2hhbWJlciAtIHNjaGVtYXRpYyIsImV4dHJhcyI6eyJzaGFwZSI6ImJveCIsImV4dGVudHMiOls1LjcsNS4yLDYuMF19LCJwcmltaXRpdmVzIjpbeyJhdHRyaWJ1dGVzIjp7IlBPU0lUSU9OIjo0fSwiaW5kaWNlcyI6MiwibW9kZSI6NCwibWF0ZXJpYWwiOjF9XX0seyJuYW1lIjoiTEFZRVJfS05PV058U3VidGVycmFuZWFuIGNoYW1iZXIgLSBzY2hlbWF0aWMiLCJleHRyYXMiOnsic2hhcGUiOiJib3giLCJleHRlbnRzIjpbMTQuMCw4LjAsMy4wXX0sInByaW1pdGl2ZXMiOlt7ImF0dHJpYnV0ZXMiOnsiUE9TSVRJT04iOjV9LCJpbmRpY2VzIjoyLCJtb2RlIjo0LCJtYXRlcmlhbCI6MX1dfSx7Im5hbWUiOiJMQVlFUl9LTk9XTnxEZXNjZW5kaW5nIHBhc3NhZ2UgLSBzY2hlbWF0aWMiLCJleHRyYXMiOnsic2hhcGUiOiJib3giLCJleHRlbnRzIjpbMi4wLDg2Ljg4NDk4MTQ0MDk4MzIyLDIuMF19LCJwcmltaXRpdmVzIjpbeyJhdHRyaWJ1dGVzIjp7IlBPU0lUSU9OIjo2fSwiaW5kaWNlcyI6MiwibW9kZSI6NCwibWF0ZXJpYWwiOjF9XX0seyJuYW1lIjoiTEFZRVJfS05PV058QXNjZW5kaW5nIHBhc3NhZ2UgLSBzY2hlbWF0aWMiLCJleHRyYXMiOnsic2hhcGUiOiJib3giLCJleHRlbnRzIjpbMi4wLDQxLjg2ODg0MjgzMDkxNjY0LDIuMF19LCJwcmltaXRpdmVzIjpbeyJhdHRyaWJ1dGVzIjp7IlBPU0lUSU9OIjo3fSwiaW5kaWNlcyI6MiwibW9kZSI6NCwibWF0ZXJpYWwiOjF9XX0seyJuYW1lIjoiTEFZRVJfS05PV058R3JhbmQgR2FsbGVyeSAtIHNjaGVtYXRpYyIsImV4dHJhcyI6eyJzaGFwZSI6ImJveCIsImV4dGVudHMiOls0LjAsMzYuNzk2NzM4OTg1OTQ4MTk1LDguMF19LCJwcmltaXRpdmVzIjpbeyJhdHRyaWJ1dGVzIjp7IlBPU0lUSU9OIjo4fSwiaW5kaWNlcyI6MiwibW9kZSI6NCwibWF0ZXJpYWwiOjF9XX0seyJuYW1lIjoiTEFZRVJfREVURUNURUR8QmlnIFZvaWQgLSBkZXRlY3RlZCByZWdpb24sIGFwcHJveGltYXRlIGVudmVsb3BlIiwiZXh0cmFzIjp7InNoYXBlIjoiYm94IiwiZXh0ZW50cyI6WzguMCwzMi4wLDYuMF19LCJwcmltaXRpdmVzIjpbeyJhdHRyaWJ1dGVzIjp7IlBPU0lUSU9OIjo5fSwiaW5kaWNlcyI6MiwibW9kZSI6NCwibWF0ZXJpYWwiOjJ9XX0seyJuYW1lIjoiTEFZRVJfREVURUNURUR8Tm9ydGggRmFjZSBDb3JyaWRvciAtIGRldGVjdGVkIHJlZ2lvbiwgYXBwcm94aW1hdGUgZW52ZWxvcGUiLCJleHRyYXMiOnsic2hhcGUiOiJib3giLCJleHRlbnRzIjpbMi4yLDkuMCwyLjBdfSwicHJpbWl0aXZlcyI6W3siYXR0cmlidXRlcyI6eyJQT1NJVElPTiI6MTB9LCJpbmRpY2VzIjoyLCJtb2RlIjo0LCJtYXRlcmlhbCI6Mn1dfSx7Im5hbWUiOiJMQVlFUl9TVVJWRVl8Tm9ydGggZmFjZSBjaGV2cm9uIHN1cnZleSB6b25lIC0gbG9jYXRvciBvbmx5IiwiZXh0cmFzIjp7InNoYXBlIjoiYm94IiwiZXh0ZW50cyI6WzEzLjAsMS41LDcuMF19LCJwcmltaXRpdmVzIjpbeyJhdHRyaWJ1dGVzIjp7IlBPU0lUSU9OIjoxMX0sImluZGljZXMiOjIsIm1vZGUiOjQsIm1hdGVyaWFsIjozfV19LHsibmFtZSI6IkxBWUVSX1VOS05PV058VW5zdXJ2ZXllZCByZWdpb24gbWFya2VyIC0gTk9UIGEgY2hhbWJlciIsImV4dHJhcyI6eyJzaGFwZSI6ImJveCIsImV4dGVudHMiOlsxOC4wLDE0LjAsMTAuMF19LCJwcmltaXRpdmVzIjpbeyJhdHRyaWJ1dGVzIjp7IlBPU0lUSU9OIjoxMn0sImluZGljZXMiOjIsIm1vZGUiOjQsIm1hdGVyaWFsIjo0fV19LHsibmFtZSI6IkxBWUVSX1JFRkVSRU5DRXxHcm91bmQgcmVmZXJlbmNlIHBsYW5lIiwiZXh0cmFzIjp7InNoYXBlIjoiYm94IiwiZXh0ZW50cyI6WzI1MC4wLDI1MC4wLDAuM119LCJwcmltaXRpdmVzIjpbeyJhdHRyaWJ1dGVzIjp7IlBPU0lUSU9OIjoxM30sImluZGljZXMiOjIsIm1vZGUiOjQsIm1hdGVyaWFsIjo1fV19XSwibWF0ZXJpYWxzIjpbeyJwYnJNZXRhbGxpY1JvdWdobmVzcyI6eyJiYXNlQ29sb3JGYWN0b3IiOlswLjgwMzkyMTU2ODYyNzQ1MSwwLjcyNTQ5MDE5NjA3ODQzMTMsMC41ODgyMzUyOTQxMTc2NDcxLDAuMTc2NDcwNTg4MjM1Mjk0MTNdLCJyb3VnaG5lc3NGYWN0b3IiOjAuODUsIm1ldGFsbGljRmFjdG9yIjowLjB9LCJhbHBoYU1vZGUiOiJCTEVORCIsImRvdWJsZVNpZGVkIjp0cnVlfSx7InBick1ldGFsbGljUm91Z2huZXNzIjp7ImJhc2VDb2xvckZhY3RvciI6WzAuOTYwNzg0MzEzNzI1NDkwMiwwLjcyNTQ5MDE5NjA3ODQzMTMsMC4yMTU2ODYyNzQ1MDk4MDM5MywxLjBdLCJyb3VnaG5lc3NGYWN0b3IiOjAuODUsIm1ldGFsbGljRmFjdG9yIjowLjB9LCJhbHBoYU1vZGUiOiJPUEFRVUUiLCJkb3VibGVTaWRlZCI6dHJ1ZX0seyJwYnJNZXRhbGxpY1JvdWdobmVzcyI6eyJiYXNlQ29sb3JGYWN0b3IiOlswLjk0MTE3NjQ3MDU4ODIzNTMsMC40NTA5ODAzOTIxNTY4NjI3NSwwLjE3NjQ3MDU4ODIzNTI5NDEzLDAuNTg4MjM1Mjk0MTE3NjQ3MV0sInJvdWdobmVzc0ZhY3RvciI6MC44NSwibWV0YWxsaWNGYWN0b3IiOjAuMH0sImFscGhhTW9kZSI6IkJMRU5EIiwiZG91YmxlU2lkZWQiOnRydWV9LHsicGJyTWV0YWxsaWNSb3VnaG5lc3MiOnsiYmFzZUNvbG9yRmFjdG9yIjpbMC4yNTQ5MDE5NjA3ODQzMTM3LDAuNTY4NjI3NDUwOTgwMzkyMSwwLjg4MjM1Mjk0MTE3NjQ3MDYsMC44MjM1Mjk0MTE3NjQ3MDU4XSwicm91Z2huZXNzRmFjdG9yIjowLjg1LCJtZXRhbGxpY0ZhY3RvciI6MC4wfSwiYWxwaGFNb2RlIjoiQkxFTkQiLCJkb3VibGVTaWRlZCI6dHJ1ZX0seyJwYnJNZXRhbGxpY1JvdWdobmVzcyI6eyJiYXNlQ29sb3JGYWN0b3IiOlswLjUwOTgwMzkyMTU2ODYyNzQsMC41Mjk0MTE3NjQ3MDU4ODI0LDAuNTY4NjI3NDUwOTgwMzkyMSwwLjMxMzcyNTQ5MDE5NjA3ODRdLCJyb3VnaG5lc3NGYWN0b3IiOjAuODUsIm1ldGFsbGljRmFjdG9yIjowLjB9LCJhbHBoYU1vZGUiOiJCTEVORCIsImRvdWJsZVNpZGVkIjp0cnVlfSx7InBick1ldGFsbGljUm91Z2huZXNzIjp7ImJhc2VDb2xvckZhY3RvciI6WzAuMjk0MTE3NjQ3MDU4ODIzNTQsMC4zMTM3MjU0OTAxOTYwNzg0LDAuMzMzMzMzMzMzMzMzMzMzMywxLjBdLCJyb3VnaG5lc3NGYWN0b3IiOjAuODUsIm1ldGFsbGljRmFjdG9yIjowLjB9LCJhbHBoYU1vZGUiOiJPUEFRVUUiLCJkb3VibGVTaWRlZCI6dHJ1ZX1dLCJub2RlcyI6W3sibmFtZSI6IndvcmxkIiwiY2hpbGRyZW4iOlsxLDIsMyw0LDUsNiw3LDgsOSwxMCwxMSwxMl19LHsibmFtZSI6IkxBWUVSX09VVEVSfE91dGVyIHB5cmFtaWQgZW52ZWxvcGUiLCJtZXNoIjowfSx7Im5hbWUiOiJMQVlFUl9LTk9XTnxLaW5nIGNoYW1iZXIgLSBzY2hlbWF0aWMiLCJtZXNoIjoxfSx7Im5hbWUiOiJMQVlFUl9LTk9XTnxRdWVlbiBjaGFtYmVyIC0gc2NoZW1hdGljIiwibWVzaCI6Mn0seyJuYW1lIjoiTEFZRVJfS05PV058U3VidGVycmFuZWFuIGNoYW1iZXIgLSBzY2hlbWF0aWMiLCJtZXNoIjozfSx7Im5hbWUiOiJMQVlFUl9LTk9XTnxEZXNjZW5kaW5nIHBhc3NhZ2UgLSBzY2hlbWF0aWMiLCJtZXNoIjo0fSx7Im5hbWUiOiJMQVlFUl9LTk9XTnxBc2NlbmRpbmcgcGFzc2FnZSAtIHNjaGVtYXRpYyIsIm1lc2giOjV9LHsibmFtZSI6IkxBWUVSX0tOT1dOfEdyYW5kIEdhbGxlcnkgLSBzY2hlbWF0aWMiLCJtZXNoIjo2fSx7Im5hbWUiOiJMQVlFUl9ERVRFQ1RFRHxCaWcgVm9pZCAtIGRldGVjdGVkIHJlZ2lvbiwgYXBwcm94aW1hdGUgZW52ZWxvcGUiLCJtZXNoIjo3fSx7Im5hbWUiOiJMQVlFUl9ERVRFQ1RFRHxOb3J0aCBGYWNlIENvcnJpZG9yIC0gZGV0ZWN0ZWQgcmVnaW9uLCBhcHByb3hpbWF0ZSBlbnZlbG9wZSIsIm1lc2giOjh9LHsibmFtZSI6IkxBWUVSX1NVUlZFWXxOb3J0aCBmYWNlIGNoZXZyb24gc3VydmV5IHpvbmUgLSBsb2NhdG9yIG9ubHkiLCJtZXNoIjo5fSx7Im5hbWUiOiJMQVlFUl9VTktOT1dOfFVuc3VydmV5ZWQgcmVnaW9uIG1hcmtlciAtIE5PVCBhIGNoYW1iZXIiLCJtZXNoIjoxMH0seyJuYW1lIjoiTEFZRVJfUkVGRVJFTkNFfEdyb3VuZCByZWZlcmVuY2UgcGxhbmUiLCJtZXNoIjoxMX1dLCJidWZmZXJzIjpbeyJieXRlTGVuZ3RoIjoxMzA4fV0sImJ1ZmZlclZpZXdzIjpbeyJidWZmZXIiOjAsImJ5dGVPZmZzZXQiOjAsImJ5dGVMZW5ndGgiOjQ4fSx7ImJ1ZmZlciI6MCwiYnl0ZU9mZnNldCI6NDgsImJ5dGVMZW5ndGgiOjYwfSx7ImJ1ZmZlciI6MCwiYnl0ZU9mZnNldCI6MTA4LCJieXRlTGVuZ3RoIjoxNDR9LHsiYnVmZmVyIjowLCJieXRlT2Zmc2V0IjoyNTIsImJ5dGVMZW5ndGgiOjk2fSx7ImJ1ZmZlciI6MCwiYnl0ZU9mZnNldCI6MzQ4LCJieXRlTGVuZ3RoIjo5Nn0seyJidWZmZXIiOjAsImJ5dGVPZmZzZXQiOjQ0NCwiYnl0ZUxlbmd0aCI6OTZ9LHsiYnVmZmVyIjowLCJieXRlT2Zmc2V0Ijo1NDAsImJ5dGVMZW5ndGgiOjk2fSx7ImJ1ZmZlciI6MCwiYnl0ZU9mZnNldCI6NjM2LCJieXRlTGVuZ3RoIjo5Nn0seyJidWZmZXIiOjAsImJ5dGVPZmZzZXQiOjczMiwiYnl0ZUxlbmd0aCI6OTZ9LHsiYnVmZmVyIjowLCJieXRlT2Zmc2V0Ijo4MjgsImJ5dGVMZW5ndGgiOjk2fSx7ImJ1ZmZlciI6MCwiYnl0ZU9mZnNldCI6OTI0LCJieXRlTGVuZ3RoIjo5Nn0seyJidWZmZXIiOjAsImJ5dGVPZmZzZXQiOjEwMjAsImJ5dGVMZW5ndGgiOjk2fSx7ImJ1ZmZlciI6MCwiYnl0ZU9mZnNldCI6MTExNiwiYnl0ZUxlbmd0aCI6OTZ9LHsiYnVmZmVyIjowLCJieXRlT2Zmc2V0IjoxMjEyLCJieXRlTGVuZ3RoIjo5Nn1dfSAgHAUAAEJJTgAAAAAAAQAAAAQAAAABAAAAAgAAAAQAAAACAAAAAwAAAAQAAAADAAAAAAAAAAQAAADNTObCzUzmwgAAAADNTOZCzUzmwgAAAADNTOZCzUzmQgAAAADNTObCzUzmQgAAAAAAAAAAAAAAAJqZEkMBAAAAAwAAAAAAAAAEAAAAAQAAAAAAAAAAAAAAAwAAAAIAAAACAAAABAAAAAAAAAABAAAABwAAAAMAAAAFAAAAAQAAAAQAAAAFAAAABwAAAAEAAAADAAAABwAAAAIAAAAGAAAABAAAAAIAAAACAAAABwAAAAYAAAAGAAAABQAAAAQAAAAHAAAABQAAAAYAAAAAAKjAZmZmwGZmIEIAAKjAZmZmwJqZN0IAAKjAzczMP2ZmIEIAAKjAzczMP5qZN0IAAKhAZmZmwGZmIEIAAKhAZmZmwJqZN0IAAKhAzczMP2ZmIEIAAKhAzczMP5qZN0JmZjbAzczMvwAAmEFmZjbAzczMvwAAyEFmZjbAZmZmQAAAmEFmZjbAZmZmQAAAyEFmZjZAzczMvwAAmEFmZjZAzczMvwAAyEFmZjZAZmZmQAAAmEFmZjZAZmZmQAAAyEEAAODAAAAQwQAAYMAAAODAAAAQwQAAAL8AAODAAACAvwAAYMAAAODAAACAvwAAAL8AAOBAAAAQwQAAYMAAAOBAAAAQwQAAAL8AAOBAAACAvwAAYMAAAOBAAACAvwAAAL8RaUU/v33SQqNxfUGovZc/NK7RQgUJjkERaUU/+/ahQXI5CsCovZc/0rieQV99e76ovZe/zFHSQvv2gUERaUW/QYLRQi5HkUGovZe/LkehQVSQ4L8RaUW/BQmeQSWXIz5vX7Q/SGKfQU0U/UDCkvQ9E0WnQXA7EUFvX7Q/cDtBwYqiC0LCkvQ92nUxwdxOEELCkvS97bqYQSGJ3UBvX7S/uJ2gQdp1AUHCkvS9JopOwSSxB0JvX7S/kMQ+wXZdDELH7IVAl91eQatfB0KhA6C/mFaPQUiaGELH7IVAaSJRwatfa0KhA6C/0FIRwUiafEKhA6A/0FJBQXDL/kHH7IXANZGAQVWgEEKhA6A/MK1uwbhlY0LH7IXAl90uwVWgdEIAAIDAAADAwQAAlkIAAIDAAADAwQAAokIAAIDAAAAAQQAAlkIAAIDAAAAAQQAAokIAAIBAAADAwQAAlkIAAIBAAADAwQAAokIAAIBAAAAAQQAAlkIAAIBAAAAAQQAAokLNzIy/AADPQgAAmEHNzIy/AADPQgAAqEHNzIy/AADhQgAAmEHNzIy/AADhQgAAqEHNzIw/AADPQgAAmEHNzIw/AADPQgAAqEHNzIw/AADhQgAAmEHNzIw/AADhQgAAqEEAANDAAIDiQgAAlEEAANDAAIDiQgAAzEEAANDAAIDlQgAAlEEAANDAAIDlQgAAzEEAANBAAIDiQgAAlEEAANBAAIDiQgAAzEEAANBAAIDlQgAAlEEAANBAAIDlQgAAzEEAAKhBAAAAwgAALEIAAKhBAAAAwgAAVEIAAKhBAACQwQAALEIAAKhBAACQwQAAVEIAABxCAAAAwgAALEIAABxCAAAAwgAAVEIAABxCAACQwQAALEIAABxCAACQwQAAVEIAAPrCAAD6wmZm5r4AAPrCAAD6wpqZGb4AAPrCAAD6QmZm5r4AAPrCAAD6QpqZGb4AAPpCAAD6wmZm5r4AAPpCAAD6wpqZGb4AAPpCAAD6QmZm5r4AAPpCAAD6QpqZGb4=';
-new THREE.GLTFLoader().load(data,g=>{model=g.scene;scene.add(model);model.traverse(o=>{if(o.isMesh){o.material.side=THREE.DoubleSide;}});document.getElementById('status').textContent='読み込み完了：レイヤーを切り替えて観察できます';apply();},undefined,e=>{document.getElementById('status').textContent='読み込みエラー：WebGL対応ブラウザで開いてください。';});
-function resize(){const w=host.clientWidth,h=host.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h)}window.addEventListener('resize',resize);resize();
-function layer(name){if(name.startsWith('LAYER_OUTER'))return 'OUTER';if(name.startsWith('LAYER_KNOWN'))return 'KNOWN';if(name.startsWith('LAYER_DETECTED'))return 'DETECTED';if(name.startsWith('LAYER_SURVEY'))return 'SURVEY';if(name.startsWith('LAYER_UNKNOWN'))return 'UNKNOWN';if(name.startsWith('LAYER_REFERENCE'))return 'REFERENCE';return 'KNOWN'}
-function apply(){if(!model)return;const state={};document.querySelectorAll('[data-layer]').forEach(x=>state[x.dataset.layer]=x.checked);model.traverse(o=>{if(o.isMesh)o.visible=state[layer(o.name)]!==false;});}
-document.querySelectorAll('[data-layer]').forEach(x=>x.addEventListener('change',apply));document.getElementById('reset').onclick=()=>{camera.position.set(280,-330,220);controls.target.set(0,0,55);controls.update()};let outer=true;document.getElementById('cut').onclick=()=>{outer=!outer;const x=document.querySelector('[data-layer="OUTER"]');x.checked=outer;apply()};
-function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
-</script></body></html>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:#101316;color:#e9e6dc;font:14px/1.5 system-ui,-apple-system,sans-serif}
+#app{height:100dvh;display:grid;grid-template-rows:auto 1fr auto}
+header{padding:12px 14px;border-bottom:1px solid #343a3e;background:#171c20}
+h1{font-size:16px;margin:0 0 3px}
+header p{margin:0;color:#aeb8ba;font-size:12px}
+#stage{position:relative;min-height:0}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+#panel{position:absolute;left:10px;top:10px;width:min(290px,calc(100% - 20px));max-height:calc(100% - 20px);overflow:auto;background:#151b20eF;border:1px solid #3a444a;border-radius:10px;padding:10px}
+#panel h2{font-size:13px;margin:0 0 8px}
+.group{border-top:1px solid #394147;padding:8px 0}
+.group:first-of-type{border-top:0}
+label{display:flex;gap:7px;align-items:center;margin:6px 0;color:#d4d9d7;font-size:12px}
+button{background:#27343b;color:#f3f1e9;border:1px solid #52616a;border-radius:7px;padding:7px 9px;margin:2px;font-size:12px}
+#info{padding:10px 13px;background:#171c20;border-top:1px solid #343a3e;max-height:26vh;overflow:auto;font-size:12px;color:#cbd2d0}
+#info strong{color:#fff}
+a{color:#a8d4e6}
+.tag{display:inline-block;padding:2px 6px;border:1px solid #53616a;border-radius:20px;margin:2px;font-size:10px;color:#d9e0dc}
+.small{font-size:11px;color:#aab5b5}
+.warning{color:#f2c98d}
+</style>
+</head>
+<body>
+<div id="app">
+<header>
+<h1>クフ王の大ピラミッド｜研究統合モデル v1</h1>
+<p>根拠のある測量値を優先。未確定領域を確定した部屋として描かない。</p>
+</header>
+
+<div id="stage">
+<div id="panel">
+<h2>表示レイヤー</h2>
+<div class="group">
+<label><input type="checkbox" id="shell" checked> 外形（Petrie測量基準）</label>
+<label><input type="checkbox" id="rooms" checked> 既知の内部構造（位置概略）</label>
+<label><input type="checkbox" id="north" checked> 北面回廊（研究値・不確実性あり）</label>
+<label><input type="checkbox" id="void" checked> Big Void（検出範囲の概念表示）</label>
+</div>
+<div class="group">
+<button data-view="all">全体</button>
+<button data-view="north">北面</button>
+<button data-view="section">断面</button>
+<button id="rotate">自動回転：ON</button>
+</div>
+<div class="group small">
+ドラッグ：回転 ／ ピンチ・ホイール：拡大縮小 ／ 2本指ドラッグ：移動
+</div>
+</div>
+</div>
+
+<div id="info">
+<strong>モデルの読み方</strong><br>
+オブジェクトをタップすると根拠を表示。外形寸法はPetrie（1883）の化粧石底辺平均9,068.8 in＝約230.35m、頂点高5,776 in＝約146.71mを採用。これは現存する外装の実測ではなく、原形復元に関する歴史的測量値。<br>
+<span class="warning">注意：</span>
+内部構造は位置・形状の確度を分けた研究表示。Big Voidは長さ最低30mという検出情報であり、正確な輪郭を意味しない。
+</div>
+</div>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+import {OrbitControls} from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
+
+const stage=document.querySelector('#stage');
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x101316);
+
+const camera=new THREE.PerspectiveCamera(45,1,.1,3000);
+camera.position.set(310,210,330);
+
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+stage.appendChild(renderer.domElement);
+
+const controls=new OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;
+controls.target.set(0,65,0);
+
+scene.add(new THREE.HemisphereLight(0xdde8ef,0x5b4c3c,2));
+
+const sun=new THREE.DirectionalLight(0xffe3b5,2.2);
+sun.position.set(-180,260,120);
+scene.add(sun);
+
+const grid=new THREE.GridHelper(320,16,0x53616a,0x293238);
+grid.position.y=-.2;
+scene.add(grid);
+
+const root=new THREE.Group();
+scene.add(root);
+const items=[];
+
+function mat(color,opacity=1,wire=false){
+return new THREE.MeshStandardMaterial({
+color,
+transparent:opacity<1,
+opacity,
+wireframe:wire,
+side:THREE.DoubleSide,
+roughness:.9
+});
+}
+
+function addMesh(geo,material,name,detail){
+const m=new THREE.Mesh(geo,material);
+m.name=name;
+m.userData.detail=detail;
+root.add(m);
+items.push(m);
+return m;
+}
+
+const B=230.35,H=146.71,half=B/2;
+
+const pyramidGeo=new THREE.BufferGeometry();
+const verts=[
+-half,0,-half,
+half,0,-half,
+half,0,half,
+-half,0,half,
+0,H,0
+];
+const idx=[
+0,2,1,0,3,2,
+0,1,4,
+1,2,4,
+2,3,4,
+3,0,4
+];
+
+pyramidGeo.setAttribute(
+'position',
+new THREE.Float32BufferAttribute(verts,3)
+);
+pyramidGeo.setIndex(idx);
+pyramidGeo.computeVertexNormals();
+
+const shell=addMesh(
+pyramidGeo,
+mat(0xd9c7a0,.22),
+'外形（原形復元）',
+'Petrie 1883：化粧石底辺平均 9,068.8 in = 230.35m。頂点高 5,776 in = 146.71m。底辺は四辺の測量値の平均。外装石の現存状態を再現したものではなく、原形の基準面。'
+);
+
+const edges=new THREE.LineSegments(
+new THREE.EdgesGeometry(pyramidGeo),
+new THREE.LineBasicMaterial({
+color:0xd9c7a0,
+transparent:true,
+opacity:.65
+})
+);
+root.add(edges);
+
+function box(name,pos,size,color,detail,opacity=.65){
+const m=addMesh(
+new THREE.BoxGeometry(...size),
+mat(color,opacity),
+'',
+detail
+);
+m.name=name;
+m.position.set(...pos);
+return m;
+}
+
+// 既知内部構造：現段階では測量座標による確定配置ではなく概略図示
+const roomsGroup=new THREE.Group();
+root.add(roomsGroup);
+
+function room(name,pos,size,color,detail){
+const m=new THREE.Mesh(
+new THREE.BoxGeometry(...size),
+mat(color,.72)
+);
+m.position.set(...pos);
+m.name=name;
+m.userData.detail=detail;
+roomsGroup.add(m);
+items.push(m);
+return m;
+}
+
+room(
+'地下の岩窟（概略）',
+[0,-4,0],
+[8,3,7],
+0x9a9a9a,
+'Petrieは地下室と通路が岩盤を粗く掘った未完成空間であると記録。形状は不整形で、ここでは寸法・輪郭を確定できないため、正確な立体形状として描いていない。'
+);
+
+room(
+'女王の間（位置概略）',
+[0,21.2,0],
+[5.25,5.0,5.8],
+0x6ba6b7,
+'Petrie測量：室内幅 約205.85 in（5.23m）、床長 約227.50 in（5.78m）。高さは床面定義に注意が必要。モデル位置・高さは概略表示で、測量図面に基づく最終配置前。'
+);
+
+room(
+'王の間（位置概略）',
+[0,43.0,0],
+[10.5,5.9,5.2],
+0xc28b62,
+'Petrie測量記録から王の間の平面寸法・床レベルを参照。図示位置は高さ約1,691 in（42.96m）を基準とした概略配置。実際の壁の不整・石材目地・変形は未反映。'
+);
+
+const corridor=room(
+'北面回廊 SP-NFC（概念位置）',
+[0,2,half-5],
+[2.02,2.18,9.06],
+0x70c7df,
+'2025年の高感度ミューオン測定値として幅2.02±0.06m、高さ2.18±0.17m、長さ9.06±0.07mが報告。ERT研究は約2.5m×2.5m規模を示す。座標系の変換・原点整合が完了していないため、ここでは外形に対する正確な位置を主張しない概念表示。'
+);
+corridor.visible=false;
+
+const voidMark=box(
+'Big Void（検出情報）',
+[0,83,0],
+[5,3,30],
+0xd4a6dc,
+'ScanPyramids 2017：大回廊の上方に、断面が大回廊に類似し、最低長さ30mの大きな空隙を検出。正確な幅・高さ・輪郭・端点は確定していない。薄い線状表示は検出位置の概念表現であり、確定形状ではない。',
+.2
+);
+voidMark.material.wireframe=true;
+
+const faceLine=new THREE.Line(
+new THREE.BufferGeometry().setFromPoints([
+new THREE.Vector3(-half,0,half),
+new THREE.Vector3(0,H,0),
+new THREE.Vector3(half,0,half)
+]),
+new THREE.LineBasicMaterial({color:0x8aa7b5})
+);
+root.add(faceLine);
+
+const ray=new THREE.Raycaster();
+const pointer=new THREE.Vector2();
+let down=false;
+let auto=true;
+
+renderer.domElement.addEventListener('pointerdown',()=>{
+down=true;
+});
+
+renderer.domElement.addEventListener('pointerup',e=>{
+if(!down)return;
+down=false;
+
+pointer.x=e.clientX/innerWidth*2-1;
+pointer.y=-(e.clientY-stage.getBoundingClientRect().top)/stage.clientHeight*2+1;
+
+ray.setFromCamera(pointer,camera);
+const hit=ray.intersectObjects(items,false)[0];
+
+if(hit){
+document.querySelector('#info').innerHTML=
+'<strong>'+hit.object.name+'</strong><br>'+
+hit.object.userData.detail;
+}
+});
+
+document.querySelectorAll('input[type=checkbox]').forEach(el=>{
+el.addEventListener('change',()=>{
+const id=el.id;
+if(id==='shell'){
+shell.visible=el.checked;
+edges.visible=el.checked;
+}
+if(id==='rooms')roomsGroup.visible=el.checked;
+if(id==='north')corridor.visible=el.checked;
+if(id==='void')voidMark.visible=el.checked;
+});
+});
+
+document.querySelector('#rotate').onclick=()=>{
+auto=!auto;
+document.querySelector('#rotate').textContent=
+'自動回転：'+(auto?'ON':'OFF');
+};
+
+document.querySelectorAll('[data-view]').forEach(b=>{
+b.onclick=()=>{
+const v=b.dataset.view;
+
+if(v==='north'){
+camera.position.set(0,90,370);
+controls.target.set(0,50,0);
+}else if(v==='section'){
+camera.position.set(330,100,0);
+controls.target.set(0,65,0);
+}else{
+camera.position.set(310,210,330);
+controls.target.set(0,65,0);
+}
+controls.update();
+};
+});
+
+function resize(){
+const w=stage.clientWidth;
+const h=stage.clientHeight;
+camera.aspect=w/h;
+camera.updateProjectionMatrix();
+renderer.setSize(w,h);
+}
+addEventListener('resize',resize);
+resize();
+
+function animate(){
+requestAnimationFrame(animate);
+if(auto&&!controls.state)root.rotation.y+=.0015;
+controls.update();
+renderer.render(scene,camera);
+}
+animate();
+</script>
+</body>
+</html>
+
